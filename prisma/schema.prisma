@@ -1,0 +1,330 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InstitutionType {
+  PONDOK
+  MADRASAH
+  TPQ
+  SEKOLAH_UMUM
+  TK
+  PAUD
+}
+
+model Institution {
+  id                String          @id @default(cuid())
+  name              String
+  type              InstitutionType
+  modules           String[] // contoh: ["core", "tahfidz", "rapor"]
+  createdAt         DateTime        @default(now())
+  santris           Santri[]
+  mataPelajarans    MataPelajaran[]
+  namaBank          String?
+  noRekening        String?
+  atasNamaRekening  String?
+  logoUrl           String?
+  units             Unit[]
+  kegiatans         Kegiatan[]
+  npsn              String?
+  namaKepalaSekolah String?
+  nipKepalaSekolah  String?
+  provinsi          String?
+  kabupaten         String?
+  kecamatan         String?
+  desaKelurahan     String?
+  dusun             String?
+  rt                String?
+  rw                String?
+  pengumumans       Pengumuman[]
+  namaArab          String?
+  kewajibanKartu    String? // satu baris = satu poin kewajiban
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String?   @default("WALI_SANTRI")
+  institutionId String?
+  sessions      Session[]
+  accounts      Account[]
+
+  nip          String?
+  jenisKelamin String?
+  tempatLahir  String?
+  tanggalLahir String?
+  alamat       String?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+enum JenisKelamin {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
+model Santri {
+  id                String             @id @default(cuid())
+  nis               String             @unique
+  name              String
+  dob               DateTime?
+  address           String?
+  waliName          String?
+  waliPhone         String?
+  kelas             String?
+  institutionId     String
+  institution       Institution        @relation(fields: [institutionId], references: [id])
+  createdAt         DateTime           @default(now())
+  nilais            Nilai[]
+  absensis          Absensi[]
+  waliUserId        String?
+  tagihans          Tagihan[]
+  jenisKelamin      JenisKelamin?
+  tempatLahir       String?
+  namaAyah          String?
+  namaIbu           String?
+  pekerjaanAyah     String?
+  pekerjaanIbu      String?
+  anakKe            Int?
+  jumlahSaudara     Int?
+  asalSekolah       String?
+  fotoUrl           String?
+  unitId            String
+  unit              Unit               @relation(fields: [unitId], references: [id])
+  progressTPQ       ProgressTPQ?
+  presensiKegiatans PresensiKegiatan[]
+  kelasId   String?
+  kelasInfo Kelas?  @relation(fields: [kelasId], references: [id])
+}
+
+model MataPelajaran {
+  id            String      @id @default(cuid())
+  name          String
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  createdAt     DateTime    @default(now())
+  nilais        Nilai[]
+}
+
+model Nilai {
+  id              String        @id @default(cuid())
+  santriId        String
+  santri          Santri        @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  mataPelajaranId String
+  mataPelajaran   MataPelajaran @relation(fields: [mataPelajaranId], references: [id], onDelete: Cascade)
+  semester        String
+  nilai           Float
+  createdAt       DateTime      @default(now())
+
+  @@unique([santriId, mataPelajaranId, semester])
+}
+
+enum StatusKehadiran {
+  HADIR
+  IZIN
+  SAKIT
+  ALPA
+}
+
+model Absensi {
+  id         String          @id @default(cuid())
+  santriId   String
+  santri     Santri          @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  tanggal    DateTime
+  keterangan String // bebas isi: "Masuk Kelas", "Ngaji Sore", "Sholat Berjamaah", dst
+  status     StatusKehadiran
+  catatan    String?
+  createdAt  DateTime        @default(now())
+
+  @@unique([santriId, tanggal, keterangan])
+}
+
+enum StatusPembayaran {
+  BELUM_LUNAS
+  MENUNGGU_KONFIRMASI
+  LUNAS
+}
+
+model Tagihan {
+  id           String           @id @default(cuid())
+  santriId     String
+  santri       Santri           @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  bulan        Int // 1-12
+  tahun        Int
+  nominal      Float
+  status       StatusPembayaran @default(BELUM_LUNAS)
+  tanggalBayar DateTime?
+  catatan      String?
+  createdAt    DateTime         @default(now())
+
+  @@unique([santriId, bulan, tahun])
+}
+
+enum UnitType {
+  MADRASAH
+  TPQ
+  SEKOLAH_UMUM
+  TK
+  PAUD
+}
+
+enum Tingkatan {
+  IBTIDAIYYAH
+  TSANAWIYAH
+  ALIYAH
+}
+
+model Unit {
+  id                String      @id @default(cuid())
+  name              String // misal: "Madrasah Tsanawiyah Al-Hikmah"
+  type              UnitType
+  tingkatan         Tingkatan? // hanya diisi kalau type = MADRASAH
+  institutionId     String
+  institution       Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  createdAt         DateTime    @default(now())
+  santris           Santri[]
+  hariLiburMingguan String? // "Minggu", "Jumat", dst
+  logoUrl           String?
+  kelas Kelas[]
+}
+
+enum JilidTPQ {
+  PRA
+  JILID_1
+  JILID_2
+  JILID_3
+  JILID_4
+  JILID_5
+  JILID_6
+  AL_QURAN
+}
+
+model ProgressTPQ {
+  id        String   @id @default(cuid())
+  santriId  String   @unique
+  santri    Santri   @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  jilid     JilidTPQ @default(PRA)
+  halaman   Int      @default(0)
+  catatan   String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Kegiatan {
+  id            String             @id @default(cuid())
+  name          String // "Tahfidz", "Sorogan Kitab", "Bimbel"
+  hari          String // "Jumat"
+  institutionId String
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  createdAt     DateTime           @default(now())
+  presensis     PresensiKegiatan[]
+}
+
+model PresensiKegiatan {
+  id         String          @id @default(cuid())
+  kegiatanId String
+  kegiatan   Kegiatan        @relation(fields: [kegiatanId], references: [id], onDelete: Cascade)
+  santriId   String
+  santri     Santri          @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  tanggal    DateTime
+  status     StatusKehadiran
+  catatan    String? // misal: "Juz 3 hal 5-7, lancar" atau "Bab Thaharah"
+  nilai      String? // predikat: "Lancar", "Kurang Lancar", "Belum Lancar"
+  createdAt  DateTime        @default(now())
+
+  @@unique([kegiatanId, santriId, tanggal])
+}
+
+model Pengumuman {
+  id            String      @id @default(cuid())
+  judul         String
+  isi           String
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+}
+
+model AbsensiGuru {
+  id         String          @id @default(cuid())
+  userId     String
+  tanggal    DateTime
+  keterangan String // "Masuk Kerja", "Rapat", dll
+  status     StatusKehadiran
+  catatan    String?
+  createdAt  DateTime        @default(now())
+
+  @@unique([userId, tanggal, keterangan])
+}
+model Kelas {
+  id        String   @id @default(cuid())
+  name      String   // "Kelas 1", "Kelas 2", "Jilid Pra", "Jilid 1", dst
+  unitId    String
+  unit      Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  santris   Santri[]
+}

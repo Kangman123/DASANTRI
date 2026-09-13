@@ -24,3 +24,117 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.dark { color-scheme: dark; }
+
+.dark body { background-color: #10142e; }
+
+.app-shell-bg {
+  background: linear-gradient(135deg, #1e2749 0%, #1e2749 20%, #dbeafe 20%);
+}
+.dark .app-shell-bg { background: #10142e; }
+
+.content-panel-bg {
+  background: linear-gradient(180deg, #eef2ff 0%, #dbeafe 100%);
+}
+.dark .content-panel-bg {
+  background: linear-gradient(180deg, #10142e 0%, #171c40 100%);
+  color: #e2e8f0;
+}
+
+.dark option {
+  background-color: #232a5c;
+  color: #f8fafc;
+}
+
+/* Background dasar - slate */
+.dark .bg-white { background-color: #1a1f45 !important; }
+.dark .bg-slate-50 { background-color: #10142e !important; }
+.dark .bg-slate-100 { background-color: #232a5c !important; }
+.dark .bg-stone-50 { background-color: #10142e !important; }
+.dark .bg-violet-50 { background-color: #1a1f45 !important; }
+
+/* Background dasar - neutral (halaman Unit/Kelas/Lembaga/Guru/Mapel) */
+.dark .bg-neutral-50 { background-color: #1a1f45 !important; }
+.dark .bg-neutral-100 { background-color: #232a5c !important; }
+.dark .bg-neutral-200 { background-color: #2a3170 !important; }
+
+/* Badge/status - cyan, magenta, oranye, hijau */
+.dark .bg-sky-50, .dark .bg-blue-50 { background-color: rgba(6, 214, 255, 0.15) !important; }
+.dark .text-sky-700, .dark .text-sky-600, .dark .text-sky-500,
+.dark .text-blue-700, .dark .text-blue-600 { color: #06d6ff !important; }
+
+.dark .bg-emerald-50, .dark .bg-green-50 { background-color: rgba(74, 222, 128, 0.15) !important; }
+.dark .text-emerald-700, .dark .text-emerald-600,
+.dark .text-green-700, .dark .text-green-600 { color: #4ade80 !important; }
+
+.dark .bg-amber-50 { background-color: rgba(255, 140, 0, 0.15) !important; }
+.dark .text-amber-700, .dark .text-amber-600, .dark .text-amber-500 { color: #ff8c00 !important; }
+
+.dark .bg-red-50 { background-color: rgba(233, 30, 140, 0.15) !important; }
+.dark .text-red-700, .dark .text-red-600, .dark .text-red-500 { color: #e91e8c !important; }
+
+.dark .bg-violet-100, .dark .bg-sky-100 { background-color: rgba(233, 30, 140, 0.15) !important; }
+.dark .text-violet-700, .dark .text-violet-600 { color: #e91e8c !important; }
+
+/* Teks - slate */
+.dark .text-slate-800 { color: #f8fafc !important; }
+.dark .text-slate-700 { color: #e2e8f0 !important; }
+.dark .text-slate-600 { color: #cbd5e1 !important; }
+.dark .text-slate-500 { color: #8891c9 !important; }
+.dark .text-slate-400 { color: #6670a8 !important; }
+.dark .text-slate-300 { color: #4c548a !important; }
+
+/* Teks - neutral */
+.dark .text-neutral-800 { color: #f8fafc !important; }
+.dark .text-neutral-700 { color: #e2e8f0 !important; }
+.dark .text-neutral-600 { color: #cbd5e1 !important; }
+.dark .text-neutral-500 { color: #8891c9 !important; }
+.dark .text-neutral-400 { color: #6670a8 !important; }
+
+/* Border */
+.dark .border-slate-100, .dark .border-slate-200, .dark .border-slate-300,
+.dark .border-neutral-100, .dark .border-neutral-200, .dark .border-neutral-300 {
+  border-color: #2a3170 !important;
+}
+
+.dark .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.5) !important; }
+
+/* Form elements */
+.dark input, .dark select, .dark textarea {
+  background-color: #232a5c !important;
+  color: #f8fafc !important;
+  border-color: #3a4290 !important;
+}
+.dark input::placeholder, .dark textarea::placeholder { color: #6670a8 !important; }
+.dark input:disabled, .dark select:disabled { background-color: #1a1f45 !important; color: #6670a8 !important; }
+
+.dark button:not([class*="bg-"]) { background-color: #06d6ff !important; color: #10142e !important; font-weight: 600; }
+
+/* Tabel & hover */
+.dark table thead tr { color: #8891c9 !important; }
+.dark table tbody tr { border-color: #2a3170 !important; }
+.dark tr.hover\:bg-slate-50:hover { background-color: #232a5c !important; }
+.dark .hover\:bg-neutral-100:hover { background-color: #232a5c !important; }
+
+.dark details { background-color: #1a1f45 !important; }
+.dark summary { color: #f8fafc !important; }
+/* Jaring pengaman: pastikan semua teks di dalam kartu putih/tabel otomatis terang di dark mode,
+   termasuk yang belum diberi class warna eksplisit */
+.dark .bg-white,
+.dark .bg-neutral-50,
+.dark .bg-slate-50 {
+  color: #e2e8f0;
+}
+
+.dark table th {
+  color: #8891c9 !important;
+}
+
+.dark table td {
+  color: #e2e8f0;
+}
+
+/* Pastikan link/anchor teks di dalam tabel juga ikut terang */
+.dark table a {
+  color: #06d6ff;
+}
