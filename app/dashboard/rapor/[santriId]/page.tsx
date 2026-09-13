@@ -7,8 +7,9 @@ export default async function RaporPage({ params }: { params: Promise<{ santriId
   const santri = await prisma.santri.findUnique({
     where: { id: santriId },
     include: {
+      kelasInfo: true,
       nilais: {
-        include: { mataPelajaran: true, kelasInfo: true },
+        include: { mataPelajaran: true },
         orderBy: { semester: "asc" },
       },
     },
@@ -20,6 +21,7 @@ export default async function RaporPage({ params }: { params: Promise<{ santriId
     <div>
       <h1>Rapor: {santri.name}</h1>
       <p>NIS: {santri.nis} | Kelas: {santri.kelasInfo?.name ?? "-"}</p>
+
       <table>
         <thead>
           <tr><th>Mata Pelajaran</th><th>Semester</th><th>Nilai</th></tr>

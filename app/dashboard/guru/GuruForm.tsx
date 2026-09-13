@@ -21,18 +21,13 @@ export function GuruForm({ institutions, isSuperAdmin }: { institutions: { id: s
         )}
         <input name="name" placeholder="Nama Guru/Ustadz" required />
         <input name="email" type="email" placeholder="Email" required />
+        <input name="password" type="password" placeholder="Password (minimal 8 karakter)" required minLength={8} />
         <button type="submit" disabled={isPending} className="self-start">
           {isPending ? "Membuat akun..." : "Buat Akun"}
         </button>
 
         {state.error && <p className="text-red-600 text-sm">{state.error}</p>}
-        {state.success && state.tempPassword && (
-          <div className="bg-amber-50 text-amber-800 text-sm rounded-lg px-3 py-2 mt-2">
-            <p className="font-medium">Akun berhasil dibuat.</p>
-            <p>Password sementara: <code className="font-mono">{state.tempPassword}</code></p>
-            <p className="text-xs mt-1">Catat dan sampaikan ke guru/ustadz secara pribadi — tidak akan ditampilkan lagi setelah halaman di-refresh.</p>
-          </div>
-        )}
+        {state.success && <p className="text-green-600 text-sm">Akun berhasil dibuat. Sampaikan email &amp; password ke guru/ustadz.</p>}
       </form>
     </div>
   );
