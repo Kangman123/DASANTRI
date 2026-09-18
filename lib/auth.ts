@@ -6,11 +6,12 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   baseURL: process.env.BETTER_AUTH_URL,
   emailAndPassword: { enabled: true },
-  trustedOrigins: [
-    "http://localhost:3000",
-    "http://192.168.1.4:3000",
-    "https://database-santri.vercel.app",
-  ],
+ trustedOrigins: [
+  "http://localhost:3000",
+  "http://192.168.1.4:3000",
+  "https://database-santri.vercel.app",
+  "https://dasantri.vercel.app",
+],
   user: {
     additionalFields: {
       role: { type: "string", defaultValue: "WALI_SANTRI" },
