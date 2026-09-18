@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@better-auth/cli": "1.4.21",
-    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "^6.19.3",
     "better-auth": "1.4.21",
     "docx": "^9.7.1",
